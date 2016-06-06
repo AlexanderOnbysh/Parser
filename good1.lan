@@ -1,8 +1,16 @@
-void main ()
+void main()
 {
-    float a, b, c;
-    //print(3);
-    if (c > 1) {
-    b=(2*a +c/d)*2*a;
+    int a, b, c;
+    for(a = 3; a != 10; a +1)
+    {
+        if(a > 5){
+            printf(a);
+        }
+        else {
+            printf(a * 10 / 20 + 120);
+        }
+    }
+    if(c > a) {
+        printf(c);
     }
 }

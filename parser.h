@@ -12,8 +12,8 @@ void parser(FILE *);
 
 // Represent non-terminal token nodes
 typedef enum {
-    programNode, blockNode, varNode, mvarsNode, exprNode, xNode,
-    tNode, yNode, fNode, rNode, statsNode, mStatNode, statNode,
+    programNode, blockNode, varNode, mvarsNode, exprNode,
+    tNode, fNode, rNode, statsNode, mStatNode, statNode,
     inNode, outNode, ifNode, loopNode, assignNode, roNode
 } NodeType;
 

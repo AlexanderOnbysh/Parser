@@ -1,5 +1,3 @@
-
-
 #ifndef SCANNER_H
 #define SCANNER_H
 
@@ -19,16 +17,6 @@ TokenType getTokenTypeOfDelimiter(char);
 TokenType getTokenTypeOfOtherOperator(char);
 
 void displaySourceFile(FILE *);
-
-
-
-
-
-
-
-
-
-
 
 
 #endif

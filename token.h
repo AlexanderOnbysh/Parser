@@ -2,7 +2,6 @@
 #define TOKEN_H
 
 #define MAX 50 // max length of each word string, not including '\0'
-#define LIMIT 200 // max number of word strings in an input file
 
 extern int lineNum;
 
@@ -13,7 +12,7 @@ typedef enum {
 
     // Keywords (start finish then if repeat var int float do
     // read print void return dummy program)
-            STARTtk, FINISHtk, THENtk, IFtk, FORtk, VARtk, INTtk, FLOATtk,
+            STARTtk, FINISHtk, THENtk, IFtk, ELSEtk, FORtk, VARtk, INTtk, FLOATtk,
     MAINtk, READtk, PRINTtk, VOIDtk, RETURNtk, DUMMYtk, PROGRAMtk,
 
     // Number: sequence of decimal digits, no sign, no longer than MAX digits

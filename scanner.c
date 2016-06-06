@@ -13,7 +13,6 @@ int lineNum = 1; /// silimilar, extern var from token.h
 Token tokens[500]; // define extern var
 
 Token scanner(FILE *filePtr) {
-    //printf("\n*** in scanner.c ***\n");
 
     Token token;
     char ch;
@@ -25,7 +24,7 @@ Token scanner(FILE *filePtr) {
         // Ignore comment starting with // to the end of line
         if (ch == '/') {
             if (fgetc(filePtr) == '/') {
-                while ((ch = fgetc(filePtr)) != '\n') {}
+                while ((ch = fgetc(filePtr)) != '\n') { }
                 lineNum++;
             } else
                 fseek(filePtr, -1, SEEK_CUR);
@@ -48,7 +47,6 @@ Token scanner(FILE *filePtr) {
             token.lineNum = lineNum;
 
             fseek(filePtr, -1, SEEK_CUR);
-            //printToken(token);
             return token;
         }
 
@@ -65,7 +63,6 @@ Token scanner(FILE *filePtr) {
             token.lineNum = lineNum;
 
             fseek(filePtr, -1, SEEK_CUR);
-            //printToken(token);
             return token;
 
         }
@@ -79,11 +76,9 @@ Token scanner(FILE *filePtr) {
                 str[0] = ch;
                 str[1] = '\0';
                 strcpy(token.str, str);
-
-                //printToken(token);
                 return token;
             }
-            else if (isOtherOperators(ch)) {
+            else if (isOtherOperators(ch) && getTokenTypeOfOtherOperator(ch) != ASSIGNtk) {
                 token.tokenType = getTokenTypeOfOtherOperator(ch);
                 token.lineNum = lineNum;
 
@@ -91,62 +86,67 @@ Token scanner(FILE *filePtr) {
                 str[0] = ch;
                 str[1] = '\0';
                 strcpy(token.str, str);
-
-                //printToken(token);
                 return token;
             }
+
             else if (isStartRelationalOperator(ch)) {
-                if (ch == '<' || ch == '>') {
-                    token.lineNum = lineNum;
-                    if (ch == '<') {
+                if (ch == '<') {
+                    if ((ch = fgetc(filePtr)) == '=') {
+                        token.lineNum = lineNum;
+                        token.tokenType = LESSEQtk;
+                        strcpy(token.str, "<=");
+                        return token;
+                    }
+                    else {
+                        token.lineNum = lineNum;
                         token.tokenType = LESStk;
                         strcpy(token.str, "<");
-                    } else {
+                        return token;
+                    }
+                }
+                else if (ch == '>') {
+                    if ((ch = fgetc(filePtr)) == '=') {
+                        token.lineNum = lineNum;
+                        token.tokenType = GREATEREQtk;
+                        strcpy(token.str, ">=");
+                        return token;
+                    }
+                    else {
+                        token.lineNum = lineNum;
                         token.tokenType = GREATERtk;
                         strcpy(token.str, ">");
+                        return token;
                     }
-                    //printToken(token);
-                    return token;
                 }
                 else if (ch == '=') {
-                    if ((ch = fgetc(filePtr)) == '=' || ch == '>' || ch == '<') {
+                    if ((ch = fgetc(filePtr)) == '=') {
                         token.lineNum = lineNum;
-                        if (ch == '=') {
-                            token.tokenType = EQUALtk;
-                            strcpy(token.str, "==");
-                        } else if (ch == '>') {
-                            token.tokenType = GREATEREQtk;
-                            strcpy(token.str, "=>");
-                        } else {
-                            token.tokenType = LESSEQtk;
-                            strcpy(token.str, "=<");
-                        }
-
-                        //printToken(token);
+                        token.tokenType = EQUALtk;
+                        strcpy(token.str, "==");
                         return token;
+                    }
+                    else {
+                        token.tokenType = ASSIGNtk;
+                        token.lineNum = lineNum;
+                        strcpy(token.str, "=");
+                        return token;
+                    }
+                }
 
-                    } else if (ch == '!') {
-                        if ((ch = fgetc(filePtr)) == '=') {
-                            token.lineNum = lineNum;
-                            token.tokenType = DIFFtk;
-                            strcpy(token.str, "=!=");
-
-                            //printToken(token);
-                            return token;
-                        } else
-                            fseek(filePtr, -1, SEEK_CUR);
-                    } else
+                else if (ch == '!') {
+                    if ((ch = fgetc(filePtr)) == '=') {
+                        token.lineNum = lineNum;
+                        token.tokenType = DIFFtk;
+                        strcpy(token.str, "!=");
+                        return token;
+                    }
+                    else
                         fseek(filePtr, -1, SEEK_CUR);
                 }
+                else fseek(filePtr, -1, SEEK_CUR);
             }
-        } // end if ispunct
-
-    } // end while
-
-    // rewind(filePtr);
-
-    //printf("\n*** in scanner.c ***\n");
-
+        }
+    }
     token.tokenType = EOFtk;
     return token;
 }
@@ -185,7 +185,7 @@ int isOtherOperators(char c) {
 int isStartRelationalOperator(char c) {
     int i;
     int result = 0; // false
-    if (c == '=' || c == '<' || c == '>') {
+    if (c == '=' || c == '<' || c == '>' || c == '!') {
         result = 1;
     }
     return result;
@@ -196,6 +196,7 @@ int isStartRelationalOperator(char c) {
 TokenType getTokenTypeOfKeyword(char *word) {
 
     if (strcasecmp(word, "if") == 0) return IFtk;
+    if (strcasecmp(word, "else") == 0) return ELSEtk;
     if (strcasecmp(word, "end") == 0) return FINISHtk;
     if (strcasecmp(word, "then") == 0) return THENtk;
     if (strcasecmp(word, "for") == 0) return FORtk;
@@ -204,7 +205,7 @@ TokenType getTokenTypeOfKeyword(char *word) {
     if (strcasecmp(word, "float") == 0) return FLOATtk;
     if (strcasecmp(word, "main") == 0)  return MAINtk;
     if (strcasecmp(word, "read") == 0) return READtk;
-    if (strcasecmp(word, "print") == 0) return PRINTtk;
+    if (strcasecmp(word, "printf") == 0) return PRINTtk;
     if (strcasecmp(word, "void") == 0) return VOIDtk;
     if (strcasecmp(word, "return") == 0) return RETURNtk;
     if (strcasecmp(word, "dummy") ==0) return DUMMYtk;
@@ -238,8 +239,7 @@ int isExAcceptableChar(char c) {
     if (c == '.' || c == '(' || c == ')' || c == ',' || c =='{' || c == '}' ||
         c == ';' || c == '[' || c == ']' ||
         c == ':' || c == '+' || c == '-' || c == '*' || c == '/' || c == '%' ||
-        c == '=' || c == '<' || c == '>' || c == '!'
-        /* || c == '#' */ ) {
+        c == '=' || c == '<' || c == '>' || c == '!') {
 
         return 1;
     } else
@@ -255,16 +255,16 @@ char *getTokenTypeStr(Token token, char *str) {
         case FINISHtk: 	strcpy(str, "end [KEYWORD]"); break;
         case THENtk: 	strcpy(str, "then [KEYWORD]"); break;
         case IFtk: 		strcpy(str, "if [KEYWORD]"); break;
+        case ELSEtk:     strcpy(str, "else [KEYWORD]"); break;
         case FORtk: 	strcpy(str, "for [KEYWORD]"); break;
         case VARtk: 	strcpy(str, "var [KEYWORD]"); break;
         case INTtk: 	strcpy(str, "int [KEYWORD]"); break;
         case FLOATtk: 	strcpy(str, "float [KEYWORD]"); break;
         case MAINtk: 		strcpy(str, "do [KEYWORD]"); break;
         case READtk: 	strcpy(str, "read [KEYWORD]"); break;
-        case PRINTtk: 	strcpy(str, "print [KEYWORD]"); break;
+        case PRINTtk: 	strcpy(str, "printf [KEYWORD]"); break;
         case VOIDtk: 	strcpy(str, "void [KEYWORD]"); break;
         case RETURNtk: 	strcpy(str, "return [KEYWORD]"); break;
-        case DUMMYtk: 	strcpy(str, "dummy [KEYWORD]"); break;
         case PROGRAMtk:	strcpy(str, "program [KEYWORD]"); break;
 
         case DOTtk: 	strcpy(str, "dot [DELIMITER]"); break;

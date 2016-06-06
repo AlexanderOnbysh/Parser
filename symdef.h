@@ -1,11 +1,11 @@
 #ifndef SYMDEF_H
 #define SYMDEF_H
 
-char *keywords[15] = {"begin", "end", "then", "if", "for", "var",
+char *keywords[15] = {"begin", "end", "then", "if", "else", "for", "var",
                       "int", "float", "main",
-                      "read", "print", "void", "return", "dummy", "program"};
+                      "read", "printf", "void", "return", "program"};
 
-char *relationalOperators[] = {"==", "<", ">", "=!=", "=>", "=<"};
+char *relationalOperators[] = {"==", "<", ">", "!=", ">=", "<="};
 
 // char *otherOperators[] = {":", "+", "-", "*", "/", "%"};
 char otherOperators[7] = {'=', ':', '+', '-', '*', '/', '%'};
@@ -18,8 +18,6 @@ int wi = 0; // index of word string
 
 char numStr[MAX];
 int ni = 0;
-
-
 
 #endif
 

@@ -1,31 +1,3 @@
-/*
-* CS4280 Fall 2014 - P2
-* Author: Loc Nguyen
-*
-* $Id: main.c,v 1.5 2014/11/12 18:17:34 lhn7c5 Exp $
-* $Source: /accounts/students/l/lhn7c5/4280/P2/RCS/main.c,v $
-* Last modified:
-*       by $Author: lhn7c5 $
-*       on $Date: 2014/11/12 18:17:34 $
-*
-* $Log: main.c,v $
-* Revision 1.5  2014/11/12 18:17:34  lhn7c5
-* Parse tree with a linked-list of tokens per node.
-*
-* Revision 1.4  2014/11/09 18:33:27  lhn7c5
-* Done parser and parse tree.
-*
-* Revision 1.3  2014/11/08 20:03:42  lhn7c5
-* Done parser.
-*
-* Revision 1.2  2014/11/07 07:35:46  lhn7c5
-* Done scanner.
-*
-* Revision 1.1  2014/11/06 21:53:39  lhn7c5
-* Initial revision
-*
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -37,7 +9,6 @@
 
 int main(int argc, char *argv[])
 {
-    // printf("---BEGIN main()--- \n");
     FILE *filePtr;
     /*---------Begin process cmd-line args and Redirection--------*/
 
@@ -83,16 +54,12 @@ int main(int argc, char *argv[])
         if (c == '/') {
             if (fgetc(filePtr) == '/') {
                 while ((c = fgetc(filePtr)) != '\n') {
-                    //printf("%c", c);
                 }
                 numLine++;
             }
         }
 
-        // printf("%c", c);
-
         if (isalnum(c)) {
-            //printf("%c is letter or a number \n", c);
             tempStr[charCount] = c; // array out-of-bound checking not happen here
             charCount++;
             if (charCount > MAX) {
@@ -100,7 +67,6 @@ int main(int argc, char *argv[])
                 exit(1);
             }
         } else if (isspace(c) || isExAcceptableChar(c)) {
-            //printf("%c is space is extra acceptable character \n", c);
             charCount = 0;
         } else {
             printf("Invalid character '%c' at line %d. \n", c, numLine);
@@ -126,11 +92,8 @@ int main(int argc, char *argv[])
 
     printf("%10s \t Line number \t %s\n\n", "Token instance", "Token type");
     numToken = 0; // extern var
-    //Token *tokens = (Token *) malloc(numToken * sizeof(Token));
-//    tokens = (Token *) malloc(numToken * sizeof(Token)); // extern var
     do {
         numToken++;
-//        tokens = (Token *)realloc(tokens, numToken * sizeof(Token));
         tokens[numToken - 1] = scanner(filePtr);
 
         printToken(tokens[numToken - 1]);
@@ -138,9 +101,6 @@ int main(int argc, char *argv[])
     } while (tokens[numToken - 1].tokenType != EOFtk);
 
     /*---------/End Scanner-------------*/
-
-
-    displaySourceFile(filePtr);
 
 
     /*---------Begin Parser-------------*/
@@ -151,7 +111,6 @@ int main(int argc, char *argv[])
 
 
     fclose(filePtr);
-    // printf("\n---/END main()--- \n");
     return 0;
 }
 
